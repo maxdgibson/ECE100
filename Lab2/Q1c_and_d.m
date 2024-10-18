@@ -2,33 +2,32 @@ fo = 5*10^3;
 Z = 0.5227; % get value from max
 f = 1*10^3:1:1*10^4;
 
-N = length(f);
+M = length(f);
 
-H = zeros(1, N);
-H_mag2 = zeros(1, N);
-H2 = zeros(1, N); 
+H = zeros(1, M);
+H_mag2 = zeros(1, M);
+H2 = zeros(1, M); 
 
-for i = 1:N
+for i = 1:M
     F = f(i);
-    H(i) = 0.7943/((1-(F/fo)^2)^2 + (2*Z*F/fo)^2);
-    H_mag2(i) = (abs(H(i)))^2;
-    H2(i) = 10*log10(H_mag2(i));
+    H(i) = 0.7943/((1-(F/fo)^2)^2 + (2*Z*F/fo)^2); 
+    H2(i) = 10*log10(H(i));
 end
 
 figure(1); % making a figure for the plot to find req_fo
 hold on 
 legend on
-semilogx(f, H2, 'DisplayName', ['fo = 5 kHz'])
+semilogx(f, H2, 'DisplayName', 'fo = 5 kHz')
 
 % Find the index where H2 is closest to -1
 [~, index] = min(abs(H2 + 1)); % Find index of closest value to -1
 
 % Get the corresponding x-coordinate
-x_point = f(index);
-%y_value = -1;
+x_point = f(index)
+y_value = -1;
 
 % Add the point to the plot
-%plot(x_point, y_value, 'r*', 'MarkerSize', 10); 
+plot(x_point, -1, 'r*', 'MarkerSize', 10); 
 
 
 
@@ -45,13 +44,13 @@ hold off; % Release the plot
 req_fo = 5*10^3 * 4*10^3 / x_point
 
 f = 200:1:1*10^6;
-M = length(f);
+N = length(f);
 
-h = zeros(1, M);
-h_mag2 = zeros(1, M); 
-h2 = zeros(1, M); 
+h = zeros(1, N);
+h_mag2 = zeros(1, N); 
+h2 = zeros(1, N); 
 
-for j = i:M
+for j = i:N
     F = f(j);
     h(j) = 0.7943/((1-(F/req_fo)^2)^2 + (2*Z*F/req_fo)^2);
     h_mag2(j) = (abs(h(j)))^2;
@@ -68,7 +67,7 @@ grid on
 legend on
 hold off
 %------------------------------------
-% Adjusting fo such that |H(f)|^2 clears the 
+% Finding an fo such that |H(f)|^2 clears the 
 % passband edge and stopband edge by the 
 % same factor
 
@@ -83,6 +82,7 @@ h_mag2 = zeros(1, Y);
 h2 = zeros(1, Y); 
 for k = 1:Y
     fo_val = adj_fo(k);
+    
     passbnd_clrnc = -1 - H2_dB(4*10^3, fo_val, Z);
     stpbnd_clrnc = H2_dB(32*10^3, fo_val, Z) -(-30);
     clearance = abs(passbnd_clrnc - stpbnd_clrnc);
@@ -92,10 +92,14 @@ for k = 1:Y
 end
 
 
-function [val] = H2_dB(f, fo, Z) 
-    h = 0.7943/((1-(f/fo)^2)^2 + (2*Z*f/fo)^2);
-    h_mag2 = (abs(h))^2;
-    h_dB = 10*log10(h_mag2); 
+function [val] = H2_dB(freq, freq_o, zeta) 
+    fxn = 0.7943/((1-(freq/freq_o)^2)^2 + (2*zeta*freq/freq_o)^2);
+    fxn_magnitude = (abs(fxn))^2;
+    fxn_magnitude_dB = 10*log10(fxn_magnitude); 
 
-    val = h_dB;
+    val = fxn_magnitude_dB;
 end
+
+
+% plotting the graph using this newly found fo value:
+
