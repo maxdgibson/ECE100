@@ -1,1 +1,29 @@
-edit this file
+%% problem 1 part c
+close all
+clc
+s = tf('s'); %define s as a transfer function variable
+G1 = 2*pi*3e6;
+r = 100e3;
+c = 5e-9;
+tau = r*c;
+AB = G1/(s*(1+s*tau));
+figure(1)
+bode(AB,{100,1e6}); %does the entire Bode plot for 100<w<1e6
+margin(AB); %calculates phase margin for you
+H = AB/(1+AB); %calculate the closed loop transfer function
+figure(2)
+step(H, 1e-3); %plot the step response
+stepinfo(H) %Calculates overshoot for you
+%% problem 1 part e
+close all
+clc
+s = tf('s'); %define s as a transfer function variable
+G1 = 2*pi*3e6;
+r = 100e3;
+c = 5e-9;
+tau = r*c;
+rc = 1060
+w_o = sqrt(G1/(tau + c*rc))
+zeta = (w_o/2) * ((1/G1) + c*rc)
+OS = 100* exp((-1*pi*zeta)/sqrt(1 - zeta^2))
+
